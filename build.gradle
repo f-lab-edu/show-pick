@@ -1,14 +1,14 @@
-plugins {
+plugins { // 플러그인
 	id 'java'
 	id 'org.springframework.boot' version '3.2.2'
 	id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.show'
-version = '0.0.1-SNAPSHOT'
+group = 'com.show' // 프로젝트 그룹을 'com.show'로 설정
+version = '0.0.1-SNAPSHOT' // 프로젝트의 버전을 '0.0.1-SNAPSHOT'으로 설정
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '17' // 자바 소스의 호환성을 Java 17로 설정
 }
 
 configurations {
@@ -17,11 +17,17 @@ configurations {
 	}
 }
 
-repositories {
-	mavenCentral()
+repositories { // 라이브러리가 저장된 위치 설정
+	mavenCentral() // 기본 Maven Repository
 }
 
-dependencies {
+dependencies { // 라이브러리 사용을 위한 의존성 설정
+	/** implementation: 런타임 + 컴파일 시점 모두에서 사용
+	 * compileOnly: 컴파일할 때만 사용, 런타임 때에는 미사용
+	 * runtimeOnly: 런타임 때에만 사용
+	 * testImplementation: 테스트할 때에만 사용
+	 * annotationProcessor: 컴파일할 때만 사용
+	**/
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
@@ -31,6 +37,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+// tasks.named('test')의 의미?
+// tasks.named('test')와 test의 차이?
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// task('hello')와 tasks.register('hello')의 차이?
+tasks.register('hello') {
+	println('Hello, this is test for gradle task.')
 }
