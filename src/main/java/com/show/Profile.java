@@ -1,45 +1,44 @@
 package com.show;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import jakarta.annotation.Nonnull;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.lang.NonNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Getter
 public class Profile {
-    final String profileId;
-    String picture;
-    String nickname;
-    String introduction;
-    List<Profile> followings;
-    List<Profile> followers;
-    List<String> uploadedVideos;
-    List<String> likedVideos;
-    String visibility;
+    public enum Visibility {
+        PUBLIC, PRIVATE
+    }
+    private final String id;
+    private String picture;
+    private String nickname;
+    private String intro;
+    private Set<Profile> followings;
+    private Set<Profile> followers;
+    private Visibility visibility;
+    private Set<Video> uploadedVideos;
+    private Set<Video> likedVideos;
 
-    public Profile(String profileId, String nickname) {
-        this.profileId = profileId;
-        this.nickname = nickname;
+    public Profile(String id) {
+        this.id = id;
 
-        this.followings = new ArrayList<>();
-        this.followers = new ArrayList<>();
-        this.visibility = "public";
+        this.visibility = Visibility.PUBLIC;
+        this.followings = new HashSet<>();
+        this.followers = new HashSet<>();
+        this.uploadedVideos = new HashSet<>();
+        this.likedVideos = new HashSet<>();
     }
 
-    public void changePicture(String newPicture) {
-        this.picture = newPicture;
-    }
-
-    public void changeNickname(String newNickname) {
-        this.nickname = newNickname;
-    }
-
-    public void changeIntroduction(String newIntroduction) {
-        this.introduction = newIntroduction;
-    }
-
-    private boolean isAlreadyFollowed(Profile user) {
+    public boolean isAlreadyFollowed(Profile user) {
         return followings.contains(user);
     }
 
+    // 팔로우, 언팔로우를 분리하는 게 좋을지.
     public void follow(Profile user) {
         if (isAlreadyFollowed(user)) {
             followings.remove(user);
@@ -50,31 +49,29 @@ public class Profile {
         user.followers.add(this);
     }
 
-    private boolean isPublic() {
-        return Objects.equals(this.visibility, "public");
+    public boolean isPublic() {
+        return this.visibility == Visibility.PUBLIC;
     }
 
     public void changeVisibility() {
         if (isPublic()) {
-            this.visibility = "private";
+            this.visibility = Visibility.PRIVATE;
             return ;
         }
-        this.visibility = "public";
+        this.visibility = Visibility.PUBLIC;
     }
 
-//    like 기능 보류
-//    private boolean isAlreadyLiked(String video) {
-//        return likes.contains(video);
-//    }
-//
-//    public void like(String video) {
-//        // 1. video가 likes 안에 있는지 찾는다.
-//        // 2. 1 조건에 만족하면 likes에서 video를 지운다.
-//        // 3. 1 조건에 만족하지 않으면 likes에 video를 추가한다.
-//        if(isAlreadyLiked(video)) {
-//            likes.remove(video);
-//            return;
-//        }
-//        likes.add(video);
-//    }
+    public boolean isAlreadyLiked(Video video) {
+        return likedVideos.contains(video);
+    }
+
+    public void like(Video video) {
+        if (isAlreadyLiked(video)) {
+            likedVideos.remove(video);
+            video.subtractLikes();
+            return ;
+        }
+        likedVideos.add(video);
+        video.addLikes();
+    }
 }

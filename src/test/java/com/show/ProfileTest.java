@@ -2,34 +2,36 @@ package com.show;
 
 import org.junit.jupiter.api.Test;
 
+import static com.show.Profile.Visibility.PRIVATE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProfileTest {
 
     @Test
     void follow() {
-        Profile me = new Profile("@jjy1004", "judy");
-        Profile user = new Profile("@kmk2024", "pingu");
+        Profile me = new Profile("@jjy1004");
+        Profile user = new Profile("@kmk2024");
         me.follow(user);
 
-        assertEquals("pingu", me.followings.get(0).nickname);
-        assertEquals("judy", user.followers.get(0).nickname);
+        assertTrue(me.isAlreadyFollowed(user));
+        assertTrue(user.getFollowers().contains(me));
     }
 
     @Test
     void changeVisibility() {
-        Profile me = new Profile("@jjy1004", "judy");
+        Profile me = new Profile("@jjy1004");
         me.changeVisibility();
 
-        assertEquals("private", me.visibility);
+        assertFalse(me.isPublic());
+        assertEquals(PRIVATE, me.getVisibility());
     }
-//    @Test
-//    void like() {
-//        String video = "mp4";
-//        Profile profile = new Profile("jjy_0123", "juan");
-//        profile.like(video);
-//
-//
-//        assertEquals(video, profile.likes.get(0));
-//    }
+
+    @Test
+    void like() {
+        Profile me = new Profile("@jjy1004");
+        Video video = new Video("v001", "https://aws.com/video");
+
+        me.like(video);
+        assertTrue(me.isAlreadyLiked(video));
+    }
 }
